@@ -80,13 +80,34 @@ def quote_api():
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+
+    if request.method == "POST":
+        pass
+    else:
+        return render_template("buy.html")
+
+    # return apology("TODO")
 
 @app.route("/history")
 @login_required
 def history():
     """Show history of transactions"""
-    return apology("TODO")
+
+    user = session.get("user_id")
+    shares = db.execute("SELECT symbol, share, price, remain, datetime(timestamp, 'localtime') AS timestamp FROM transactions WHERE userId = :userid", userid = user)
+    newShares = []
+
+    for share in shares:
+        share["price"] = usd(share["price"])
+        share["remain"] = usd(share["remain"])
+        newShares.append(share)
+
+    # print(len(shares))
+    # print(shares)
+
+    return render_template("history.html", shares = newShares)
+
+    # return apology("TODO")
 
 
 @app.route("/login", methods=["GET", "POST"])

@@ -6,6 +6,7 @@
             <th>Symbol</th>
             <th>Shares</th>
             <th>Price</th>
+            <th>Balance</th>
             <th>Transacted</th>
         </tr>
     </thead>
@@ -15,10 +16,10 @@
 
         <tr id="{{ share["symbol"] }}">
             <td>{{ share["symbol"] }}</td>
-            <td>{{ share["symbol"]|upper }}</td>
-            <td>{{ share["shares"] }}</td>
-            <td data-pricenumber="0">Loading...</td>
-            <td>Loading...</td>
+            <td>{{ share["share"] }}</td>
+            <td>{{ share["price"] }}</td>
+            <td>{{ share["remain"] }}</td>
+            <td>{{ share["timestamp"] }}</td>
         </tr>
 
         {% endfor %}
