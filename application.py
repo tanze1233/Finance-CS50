@@ -1,7 +1,7 @@
 import os
 
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions
@@ -44,7 +44,36 @@ db = SQL("sqlite:///finance.db")
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return apology("TODO")
+    
+    user = session.get("user_id")
+    shares = db.execute("SELECT symbol, SUM(share) AS shares FROM transactions WHERE userId = :userid GROUP BY symbol", userid = user)
+    cash = db.execute("SELECT cash FROM users WHERE id = :userid", userid = user)
+    cashReal = usd(cash[0]["cash"])
+
+    # print(len(shares))
+    # print(shares)
+
+    return render_template("home.html", shares = shares, cash = cashReal, cashNumber = cash[0]["cash"])
+
+    # return apology("TODO")
+
+
+@app.route("/_quote_symbol", methods=["GET"])
+@login_required
+def quote_api():
+    """API_GET_STOCK_QUOTE"""
+
+    symbol = request.args.get('symbol')
+    quoteResult = lookup(symbol)
+
+    if quoteResult is None:
+            return apology("symbol unavailble", 403)
+    
+    quotePrice = usd(quoteResult['price'])
+
+    return jsonify(realPrice=quotePrice, number=quoteResult['price'], symbol=symbol)
+
+    # return apology("TODO")
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -52,7 +81,6 @@ def index():
 def buy():
     """Buy shares of stock"""
     return apology("TODO")
-
 
 @app.route("/history")
 @login_required
@@ -115,7 +143,28 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    return apology("TODO")
+
+    if request.method == "POST":
+        
+        # Ensure symbol was submitted
+        if not request.form.get("quoteSymbol"):
+            return apology("must provide symbol", 403)
+        
+        # Perform the query
+        quoteSymbol = request.form.get("quoteSymbol")
+        quoteResult = lookup(quoteSymbol)
+
+        if quoteResult is None:
+            return apology("symbol unavailble", 403)
+        
+        quotePrice = usd(quoteResult['price'])
+
+        # Show results
+        return render_template("quote.html", quoted = True, symbol = quoteSymbol, price = quotePrice)
+    
+    else:
+        return render_template("quote.html")
+    # return apology("TODO")
 
 
 @app.route("/register", methods=["GET", "POST"])

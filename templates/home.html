@@ -1,0 +1,100 @@
+{% extends "layout.html" %} {% block title %} Home {% endblock %} {% block main %}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Shares</th>
+            <th>Price</th>
+            <th>TOTAL</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td colspan="4"></td>
+            <td id="total">Loading...</td>
+        </tr>
+    </tfoot>
+    <tbody>
+
+        {% for share in shares %}
+
+        <tr id="{{ share["symbol"] }}">
+            <td>{{ share["symbol"] }}</td>
+            <td>{{ share["symbol"]|upper }}</td>
+            <td>{{ share["shares"] }}</td>
+            <td data-pricenumber="0">Loading...</td>
+            <td>Loading...</td>
+        </tr>
+
+        {% endfor %}
+
+        <tr>
+            <td colspan="4">CASH</td>
+            <td data-cashnumber="{{ cashNumber }}" id="cash">{{ cash }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<script type=text/javascript>
+    $SCRIPT_ROOT = {{request.script_root|tojson|safe}};
+
+    $(function() {
+        // Handler for .ready() called.
+        
+        var mytable = $(".table")[0];
+        //console.log($(".table")[0].text());
+
+        function comma(num) {
+            var price = Number(num);
+            if(!isNaN(price)){
+                var str = String(Math.abs(price).toFixed(2)).split('.');
+                return str[0].split('').reverse().join('').replace(/(\d{3})/g, '$1,').replace(/(.+),$/g, '$1').split('').reverse().join('') + '.' + str[1];
+            } else {
+                return '0.00';
+            }
+        }
+
+        function calc(){
+
+            // You MUST redefine "mytable" here.
+            var mytable = $(".table")[0];
+            var cash = $("#cash").first().data("cashnumber");
+            var total = cash;
+
+            for(var i=1,rows=mytable.rows.length; i<rows-2; i++){
+
+                symData = $(".table")[0].rows[i].cells[0].textContent;
+                priceData = $("#" + symData).find("td:nth-child(4)").data("pricenumber");
+                shareNumer = $("#" + symData).find("td:nth-child(3)").text();
+
+                stockTotalPrice = priceData*shareNumer;
+                shareNumer = $("#" + symData).find("td:nth-child(5)").text("$" + comma(stockTotalPrice));
+
+                total = total + stockTotalPrice;
+
+            }
+            
+            $("#total").text("$" + comma(total));
+            return total;
+        }
+
+        for(var i=1,rows=mytable.rows.length; i<rows-2; i++){
+            //console.log(mytable.rows[i].cells[0]);
+            symData = $(".table")[0].rows[i].cells[0].textContent;
+            
+            $.getJSON($SCRIPT_ROOT + '/_quote_symbol', {
+                symbol: symData,
+            }, function(data) {
+                console.log(data.symbol + ":" + data);
+                $("#" + data.symbol).find("td:nth-child(4)").text(data.realPrice);
+                $("#" + data.symbol).find("td:nth-child(4)").data("pricenumber", data.number);
+                calc();
+            });
+
+        }
+    });
+</script>
+
+{% endblock %}

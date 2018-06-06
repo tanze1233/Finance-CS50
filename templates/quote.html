@@ -1,4 +1,4 @@
-{% extends "layout.html" %} {% block title %} Quote {% endblock %} {% block main %}
+{% extends "layout.html" %} {% block title %} Quote {% endblock %} {% block main %} {% if not quoted %}
 <form action="/quote" method="post">
     <div class="form-group">
         <input autocomplete="off" autofocus class="form-control" name="quoteSymbol" placeholder="Symbol" type="text" />
@@ -10,4 +10,8 @@
     -->
     <button class="btn btn-primary" type="submit">Quote</button>
 </form>
-{% endblock %}
+{% else %}
+<p>
+    A share of {{ symbol }} ({{ symbol|upper }}) costs {{ price }}.
+</p>
+{% endif %} {% endblock %}
