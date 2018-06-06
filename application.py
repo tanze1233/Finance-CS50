@@ -113,7 +113,7 @@ def buy():
         
         cashRemain = cashYouHave - cashNeed
 
-        rows = db.execute("INSERT INTO transactions (userId, symbol, share, price, remain, bought) VALUES (:user, :buySymbol, :shares, :quotePrice, :cashRemain, 1)", user=user, buySymbol = buySymbol, shares = shares, quotePrice = quotePrice, cashRemain = cashRemain)
+        rows = db.execute("INSERT INTO transactions (userId, symbol, share, price, remain, bought) VALUES (:user, :buySymbol, :shares, :quotePrice, :cashRemain, 1)", user=user, buySymbol = buySymbol, shares = shares, quotePrice = buyPrice, cashRemain = cashRemain)
         rows = db.execute("UPDATE users SET cash = :cashRemain WHERE id = :user", user=user,cashRemain = cashRemain)
 
         flash(f"You've just got {shares} shares of {buySymbol}!")
@@ -271,7 +271,57 @@ def register():
 @login_required
 def sell():
     """Sell shares of stock"""
-    return apology("TODO")
+
+    if request.method == "POST":
+        
+        # Ensure sellSymbol was submitted
+        if not request.form.get("symbol"):
+            return apology("must provide symbol", 403)
+
+        # Ensure shares was submitted
+        elif not request.form.get("shares") or not request.form.get("shares").isdigit():
+            return apology("must provide shares", 403)
+        
+        # Perform the query
+        sellSymbol = request.form.get("symbol")
+        shares = int(request.form.get("shares"))
+        sharesNegative = 0 - shares
+
+        # Check if you have enough shares
+        user = session.get("user_id")
+        shareAvailable = db.execute("SELECT SUM(share) AS shares FROM transactions WHERE userId = :userid AND symbol = :sellSymbol GROUP BY symbol", userid = user, sellSymbol = sellSymbol)
+        shareAvailable = shareAvailable[0]["shares"]
+        if shareAvailable < shares:
+            return apology("insufficient shares", 403)
+        
+        quoteResult = lookup(sellSymbol)
+        if quoteResult is None:
+            return apology("symbol unavailble", 403)
+
+        quotePrice = usd(quoteResult['price'])
+        sellPrice = quoteResult['price']
+
+        cashObtained = float(sellPrice) * float(shares)
+        cash = db.execute("SELECT cash FROM users WHERE id = :userid", userid = user)
+        cashYouHave = cash[0]["cash"]
+
+        cashRemain = cashYouHave + cashObtained
+
+        rows = db.execute("INSERT INTO transactions (userId, symbol, share, price, remain, bought) VALUES (:user, :sellSymbol, :shares, :quotePrice, :cashRemain, 1)", user=user, sellSymbol = sellSymbol, shares = sharesNegative, quotePrice = sellPrice, cashRemain = cashRemain)
+        rows = db.execute("UPDATE users SET cash = :cashRemain WHERE id = :user", user=user,cashRemain = cashRemain)
+
+        flash(f"You've just sold {shares} shares of {sellSymbol} for {usd(cashObtained)}!")
+
+        # Redirect user to home page
+        return redirect("/")
+
+    else:
+
+        user = session.get("user_id")
+        shares = db.execute("SELECT symbol, SUM(share) AS shares FROM transactions WHERE userId = :userid GROUP BY symbol", userid = user)
+        return render_template("sell.html", shares=shares)
+
+    # return apology("TODO")
 
 
 def errorhandler(e):

@@ -1,0 +1,38 @@
+{% extends "layout.html" %} {% block title %} Sell {% endblock %} {% block main %} 
+
+<form action="/sell" method="post">
+    <div class="form-group">
+        <select class="form-control" name="symbol" id="symbol">
+            <option disabled="" selected="" value="">Symbol</option>
+            
+            {% for share in shares %}
+            <option value="{{ share.symbol }}" data-shares="{{ share.shares }}">{{ share.symbol }}</option>
+            {% endfor %}
+            
+        </select>
+    </div>
+    <div class="form-group">
+        <input autocomplete="off" class="form-control" min="0" name="shares" placeholder="Shares (Max: 0)" type="number" id="shares" style="width: 24%">
+    </div>
+    <!-- No need for password
+        <div class="form-group">
+            <input class="form-control" name="password" placeholder="Password" type="password" />
+        </div>
+    -->
+    <button class="btn btn-primary" type="submit">Sell</button>
+</form>
+
+<script type=text/javascript>
+
+    $(function() {
+
+        $('#symbol').on('change', function() {
+            console.log(this);
+            $('#shares').attr('placeholder', 'Shares (Max: ' + $(this).children('option:selected').data('shares') + ')');
+            $('#shares').attr('max', $(this).children('option:selected').data('shares'));
+        });
+
+    });
+
+</script>
+{% endblock %}
