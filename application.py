@@ -82,7 +82,45 @@ def buy():
     """Buy shares of stock"""
 
     if request.method == "POST":
-        pass
+        
+        # Ensure buySymbol was submitted
+        if not request.form.get("buySymbol"):
+            return apology("must provide symbol", 403)
+
+        # Ensure shares was submitted
+        elif not request.form.get("shares") or not request.form.get("shares").isdigit():
+            return apology("must provide shares", 403)
+        
+        # Perform the query
+        buySymbol = request.form.get("buySymbol")
+        shares = request.form.get("shares")
+        quoteResult = lookup(buySymbol)
+
+        if quoteResult is None:
+            return apology("symbol unavailble", 403)
+        
+        quotePrice = usd(quoteResult['price'])
+        buyPrice = quoteResult['price']
+
+        cashNeed = float(buyPrice) * float(shares)
+
+        user = session.get("user_id")
+        cash = db.execute("SELECT cash FROM users WHERE id = :userid", userid = user)
+        cashYouHave = cash[0]["cash"]
+
+        if cashYouHave < cashNeed:
+            return apology("insufficient cash", 403)
+        
+        cashRemain = cashYouHave - cashNeed
+
+        rows = db.execute("INSERT INTO transactions (userId, symbol, share, price, remain, bought) VALUES (:user, :buySymbol, :shares, :quotePrice, :cashRemain, 1)", user=user, buySymbol = buySymbol, shares = shares, quotePrice = quotePrice, cashRemain = cashRemain)
+        rows = db.execute("UPDATE users SET cash = :cashRemain WHERE id = :user", user=user,cashRemain = cashRemain)
+
+        flash(f"You've just got {shares} shares of {buySymbol}!")
+
+        # Redirect user to home page
+        return redirect("/")
+
     else:
         return render_template("buy.html")
 
