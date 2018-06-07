@@ -5,5 +5,13 @@
 {% endblock %}
 
 {% block main %}
-    <img alt="{{ top }}" class="border" src="http://memegen.link/custom/{{ top | urlencode }}/{{ bottom | urlencode }}.jpg?alt=https://i.imgur.com/CsCgN7Ll.png"/>
+
+    <div class="media error-container">
+        <img class="align-self-end mr-3" src="/static/check.png" alt="{{ top }}" style="width: 100px">
+        <div class="media-body error-detail">
+            <h5 class="mt-0 error-title">Oops……That's {{ top }} !</h5>
+                Error Description: {{ bottom }}
+        </div>
+    </div>
+    
 {% endblock %}

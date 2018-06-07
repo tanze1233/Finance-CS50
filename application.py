@@ -67,7 +67,7 @@ def quote_api():
     quoteResult = lookup(symbol)
 
     if quoteResult is None:
-            return apology("symbol unavailble", 403)
+            return apology("Symbol Unavailable", 403)
     
     quotePrice = usd(quoteResult['price'])
 
@@ -85,7 +85,7 @@ def quote_serial_api():
     quoteResult = serialData(symbol)
 
     if quoteResult is None:
-            return apology("symbol unavailble", 403)
+            return apology("Symbol Unavailable", 403)
 
     return jsonify(data=quoteResult, symbol=symbol)
 
@@ -101,11 +101,11 @@ def buy():
         
         # Ensure buySymbol was submitted
         if not request.form.get("buySymbol"):
-            return apology("must provide symbol", 403)
+            return apology("Must Provide Symbol", 403)
 
         # Ensure shares was submitted
         elif not request.form.get("shares") or not request.form.get("shares").isdigit():
-            return apology("must provide shares", 403)
+            return apology("Must Provide Shares", 403)
         
         # Perform the query
         buySymbol = request.form.get("buySymbol")
@@ -113,7 +113,7 @@ def buy():
         quoteResult = lookup(buySymbol)
 
         if quoteResult is None:
-            return apology("symbol unavailble", 403)
+            return apology("Symbol Unavailble", 403)
         
         quotePrice = usd(quoteResult['price'])
         buyPrice = quoteResult['price']
@@ -125,7 +125,7 @@ def buy():
         cashYouHave = cash[0]["cash"]
 
         if cashYouHave < cashNeed:
-            return apology("insufficient cash", 403)
+            return apology("Insufficient Cash", 403)
         
         cashRemain = cashYouHave - cashNeed
 
@@ -176,11 +176,11 @@ def login():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return apology("Must Provide Username", 403)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return apology("Must Provide Password", 403)
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
@@ -188,7 +188,7 @@ def login():
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/or password", 403)
+            return apology("Invalid Username and/or Password", 403)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -223,14 +223,14 @@ def quote():
         
         # Ensure symbol was submitted
         if not request.form.get("quoteSymbol"):
-            return apology("must provide symbol", 403)
+            return apology("Must Provide Symbol", 403)
         
         # Perform the query
         quoteSymbol = request.form.get("quoteSymbol")
         quoteResult = lookup(quoteSymbol)
 
         if quoteResult is None:
-            return apology("symbol unavailble", 403)
+            return apology("Symbol Unavailable", 403)
         
         quotePrice = usd(quoteResult['price'])
 
@@ -250,11 +250,11 @@ def register():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return apology("Must Provide Username", 403)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return apology("Must Provide Password", 403)
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
@@ -292,11 +292,11 @@ def sell():
         
         # Ensure sellSymbol was submitted
         if not request.form.get("symbol"):
-            return apology("must provide symbol", 403)
+            return apology("Must Provide Symbol", 403)
 
         # Ensure shares was submitted
         elif not request.form.get("shares") or not request.form.get("shares").isdigit():
-            return apology("must provide shares", 403)
+            return apology("Must Provide Shares", 403)
         
         # Perform the query
         sellSymbol = request.form.get("symbol")
@@ -308,11 +308,11 @@ def sell():
         shareAvailable = db.execute("SELECT SUM(share) AS shares FROM transactions WHERE userId = :userid AND symbol = :sellSymbol GROUP BY symbol", userid = user, sellSymbol = sellSymbol)
         shareAvailable = shareAvailable[0]["shares"]
         if shareAvailable < shares:
-            return apology("insufficient shares", 403)
+            return apology("Insufficient Shares", 403)
         
         quoteResult = lookup(sellSymbol)
         if quoteResult is None:
-            return apology("symbol unavailble", 403)
+            return apology("Symbol Unavailable", 403)
 
         quotePrice = usd(quoteResult['price'])
         sellPrice = quoteResult['price']

@@ -50,3 +50,27 @@ main tfoot {
     /* boldface tables' footers */
     font-weight: bold;
 }
+
+main .error {
+    width: 100px;
+}
+
+main .error-container {
+    text-align: start;
+    
+}
+
+main .error-detail {
+    padding-left: 20px;
+    color: lightgrey;
+    font-style: italic;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+main .error-title {
+    font-weight: bold;
+    font-size: 25px;
+    color: #ea433b;
+    font-style: normal;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
