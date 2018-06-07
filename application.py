@@ -11,7 +11,8 @@ from helpers import apology, login_required, lookup, usd, serialData
 
 # Ensure environment variable is set
 if not os.environ.get("API_KEY"):
-    raise RuntimeWarning("API_KEY not set, Using default")
+    # raise RuntimeWarning("API_KEY not set, Using default")
+    pass
 
 # Configure application
 app = Flask(__name__)
