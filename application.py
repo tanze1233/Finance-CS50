@@ -256,6 +256,13 @@ def register():
         # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("Must Provide Password", 403)
+        
+        # Ensure password was submitted
+        elif not request.form.get("passwordConfirm"):
+            return apology("Must Provide Password Twice", 403)
+
+        elif request.form.get("passwordConfirm") != request.form.get("password"):
+            return apology("Must Provide Same Password", 403)
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",

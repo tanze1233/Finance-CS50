@@ -18,6 +18,11 @@ Log In
     <div class="form-group">
         <input class="form-control" name="password" placeholder="Password" type="password" />
     </div>
+    {% if reg %}
+    <div class="form-group">
+        <input class="form-control" name="passwordConfirm" placeholder="Confirm Password" type="password" />
+    </div>
+    {% endif %}
     <button class="btn btn-primary" type="submit">{{ 'Sign Up' if reg else 'Log In' }}</button>
 </form>
 
