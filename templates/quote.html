@@ -14,4 +14,81 @@
 <p>
     A share of {{ symbol }} ({{ symbol|upper }}) costs {{ price }}.
 </p>
+<div class="chart-container" style="position: relative; height:300px; width:1000px">
+    <p style="color: lightgrey;font-style: italic;font-size: 15px">Loading historical data...</p>
+    <canvas id="chart" width="1000" height="300"></canvas>
+</div>
+<script type=text/javascript src="{{ url_for('static', filename='Chart.js') }}"></script>
+<script type=text/javascript>
+
+    $SCRIPT_ROOT = {{request.script_root|tojson|safe}};
+
+    $(function() {
+        // Handler for .ready() called.
+
+        var sdata = [];
+
+        $.getJSON($SCRIPT_ROOT + '/_quote_serial', {
+            symbol: "{{ symbol }}",
+        }, function(data) {
+            $('.chart-container p:first-child').css('display', 'none');
+            console.log(data.data);
+            this.sdata = data;
+            const ORANGE = 'rgb(255,135,67)', FONT_COLOR = '#ff8743' , TOOL_COLOR = '#fff6f2'
+            var ctx = $("#chart")[0].getContext('2d');;
+            var gradient = ctx.createLinearGradient(0,0,0,250);
+            gradient.addColorStop(0,'rgba(255,135,67,0.5)');
+            gradient.addColorStop(0.5,'rgba(255,135,67,0.25)');
+            gradient.addColorStop(0.9,'rgba(255,135,67,0.05)');
+            gradient.addColorStop(1,'rgba(255,135,67,0)');
+
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.data.date,
+                    datasets: [{
+                        label: 'Price of {{ symbol }}',
+                        data: data.data.price,
+                        backgroundColor: gradient,
+                        borderColor:ORANGE,
+                        pointBackgroundColor: 'transparent',
+                        pointBorderColor: 'transparent',
+                        pointHoverBackgroundColor: 'rgba(0,0,0, .5)',
+                        borderWidth:2,
+                    }]
+                },
+                options: {
+                    responsive: false,
+				    tooltips: {
+					    mode: 'index',
+					    intersect: false,
+				    },
+				    hover: {
+					    mode: 'nearest',
+					    intersect: true
+				    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:false
+                            }
+                        }],
+                        xAxes: [{
+                            gridLines: {
+                                display: false,
+                            },
+                            ticks: {
+                                display: false,
+                            },
+                        }],
+                    },
+                    legend:{
+                        display:false,
+                    },
+                }
+            });
+        });
+    });
+
+</script>
 {% endif %} {% endblock %}

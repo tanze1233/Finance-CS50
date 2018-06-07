@@ -11,13 +11,20 @@ Log In
 {% endblock %} 
 
 {% block main %}
-<form action="/{{ 'register' if reg else 'login' }}" method="post">
+<form action="/{{ 'register' if reg else 'login' }}" method="post" style="margin-bottom: 10px">
     <div class="form-group">
         <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text" />
     </div>
     <div class="form-group">
         <input class="form-control" name="password" placeholder="Password" type="password" />
     </div>
-    <button class="btn btn-primary" type="submit">{{ 'Regist' if reg else 'Log In' }}</button>
+    <button class="btn btn-primary" type="submit">{{ 'Sign Up' if reg else 'Log In' }}</button>
 </form>
+
+{% if not reg %}
+<a href="register">No account? Sign up now!</a>
+{% else %}
+<a href="login">Already have an account? Sign in now!</a>
+{% endif %}
+
 {% endblock %}

@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import apology, login_required, lookup, usd
+from helpers import apology, login_required, lookup, usd, serialData
 
 # Ensure environment variable is set
 if not os.environ.get("API_KEY"):
@@ -72,6 +72,22 @@ def quote_api():
     quotePrice = usd(quoteResult['price'])
 
     return jsonify(realPrice=quotePrice, number=quoteResult['price'], symbol=symbol)
+
+    # return apology("TODO")
+
+
+@app.route("/_quote_serial", methods=["GET"])
+@login_required
+def quote_serial_api():
+    """API_GET_STOCK_QUOTE_SERIAL"""
+
+    symbol = request.args.get('symbol')
+    quoteResult = serialData(symbol)
+
+    if quoteResult is None:
+            return apology("symbol unavailble", 403)
+
+    return jsonify(data=quoteResult, symbol=symbol)
 
     # return apology("TODO")
 
@@ -177,7 +193,7 @@ def login():
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
-        flash("Login Success!")
+        flash("Welcome home!")
 
         # Redirect user to home page
         return redirect("/")
