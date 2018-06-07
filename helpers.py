@@ -45,13 +45,18 @@ def lookup(symbol):
     # Reject symbol if it contains comma
     if "," in symbol:
         return None
+    
+    if not os.environ.get("API_KEY"):
+        apiKey = "GOXO94N0N3FQ54HM"
+    else:
+        apiKey = os.getenv('API_KEY')
 
     # Query Alpha Vantage for quote
     # https://www.alphavantage.co/documentation/
     try:
 
         # GET CSV
-        url = f"https://www.alphavantage.co/query?apikey={os.getenv('API_KEY')}&datatype=csv&function=TIME_SERIES_INTRADAY&interval=1min&symbol={symbol}"
+        url = f"https://www.alphavantage.co/query?apikey={apiKey}&datatype=csv&function=TIME_SERIES_INTRADAY&interval=1min&symbol={symbol}"
         webpage = urllib.request.urlopen(url)
 
         # Parse CSV
@@ -93,13 +98,18 @@ def serialData(symbol):
     # Reject symbol if it contains comma
     if "," in symbol:
         return None
+    
+    if not os.environ.get("API_KEY"):
+        apiKey = "GOXO94N0N3FQ54HM"
+    else:
+        apiKey = os.getenv('API_KEY')
 
     # Query Alpha Vantage for quote
     # https://www.alphavantage.co/documentation/
     try:
 
         # GET CSV
-        url = f"https://www.alphavantage.co/query?apikey={os.getenv('API_KEY')}&datatype=csv&function=TIME_SERIES_DAILY&interval=1min&symbol={symbol}"
+        url = f"https://www.alphavantage.co/query?apikey={apiKey}&datatype=csv&function=TIME_SERIES_DAILY&interval=1min&symbol={symbol}"
         webpage = urllib.request.urlopen(url)
 
         # Parse CSV
