@@ -10,7 +10,9 @@ clone https://github.com/tanze1233/Finance-CS50.git
 cd Finance-CS50  
 virtualenv venv  
 . venv/bin/activate  
-pip install cs50,flask,flask_session  
+pip install cs50  
+pip install flask  
+pip install flask_session  
 ```
   
   
