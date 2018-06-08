@@ -31,6 +31,8 @@ def after_request(response):
 # Custom filter
 app.jinja_env.filters["usd"] = usd
 
+app.config["JSONIFY_PRETTYPRINT_REGULAR"] = False
+
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
@@ -343,7 +345,7 @@ def sell():
 
         user = session.get("user_id")
         shares = db.execute("SELECT symbol, SUM(share) AS shares FROM transactions WHERE userId = :userid GROUP BY symbol", userid = user)
-        return render_template("sell.html", shares=shares)
+        return render_template("sellnew.html", shares=shares)
 
     # return apology("TODO")
 
@@ -357,4 +359,4 @@ def errorhandler(e):
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
-app.run(debug=True)
+app.run(debug=False)
