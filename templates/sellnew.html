@@ -12,8 +12,7 @@
         </select>
     </div>
     <div class="form-group">
-        <input autocomplete="off" class="form-control" min="0" name="shares" placeholder="Shares (Max: 0)" type="number" id="shares"
-            style="width: 24%">
+        <input autocomplete="off" class="form-control" min="0" name="shares" placeholder="Shares (Max: 0)" type="number" id="shares" style="width: 24%">
     </div>
     <!-- No need for password
         <div class="form-group">
@@ -28,8 +27,7 @@
 
         $('#symbol').on('change', function () {
             console.log(this);
-            $('#shares').attr('placeholder', 'Shares (Max: ' + $(this).children('option:selected').data(
-                'shares') + ')');
+            $('#shares').attr('placeholder', 'Shares (Max: ' + $(this).children('option:selected').data('shares') + ')');
             $('#shares').attr('max', $(this).children('option:selected').data('shares'));
         });
 
