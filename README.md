@@ -6,8 +6,12 @@ A project of CS50 task
 (IMPORTANT)  
 Run following commands in terminal  
 ```
-clone https://github.com/tanze1233/Finance-CS50.git  
+git clone https://github.com/tanze1233/Finance-CS50.git  
 cd Finance-CS50  
+```
+
+If you don't want to run it in default python environment, you can run  
+```
 virtualenv venv  
 . venv/bin/activate  
 pip install cs50  
@@ -15,13 +19,8 @@ pip install flask
 pip install flask_session  
 ```
   
-  
-After it completes, you can either run  
+After it completes, run  
 ```
 flask run  
-```
-or  
-```
-python application.py  
 ```
 to start the server.
